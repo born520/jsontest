@@ -13,29 +13,28 @@ function renderTable(data) {
     tableData.forEach((row, rowIndex) => {
         const tr = document.createElement("tr");
         row.forEach((cell, colIndex) => {
-            // 각 배열에 인덱스가 존재하는지 확인
-            if (data.backgrounds[rowIndex] && data.backgrounds[rowIndex][colIndex] !== undefined &&
-                data.fontColors[rowIndex] && data.fontColors[rowIndex][colIndex] !== undefined &&
-                data.fontSizes[rowIndex] && data.fontSizes[rowIndex][colIndex] !== undefined &&
-                data.fontWeights[rowIndex] && data.fontWeights[rowIndex][colIndex] !== undefined &&
-                data.horizontalAlignments[rowIndex] && data.horizontalAlignments[rowIndex][colIndex] !== undefined &&
-                data.verticalAlignments[rowIndex] && data.verticalAlignments[rowIndex][colIndex] !== undefined &&
-                data.borders[rowIndex] && data.borders[rowIndex][colIndex] !== undefined) {
+            // 각 배열과 해당 인덱스가 유효한지 확인
+            const background = data.backgrounds && data.backgrounds[rowIndex] && data.backgrounds[rowIndex][colIndex];
+            const fontColor = data.fontColors && data.fontColors[rowIndex] && data.fontColors[rowIndex][colIndex];
+            const fontSize = data.fontSizes && data.fontSizes[rowIndex] && data.fontSizes[rowIndex][colIndex];
+            const fontWeight = data.fontWeights && data.fontWeights[rowIndex] && data.fontWeights[rowIndex][colIndex];
+            const hAlign = data.horizontalAlignments && data.horizontalAlignments[rowIndex] && data.horizontalAlignments[rowIndex][colIndex];
+            const vAlign = data.verticalAlignments && data.verticalAlignments[rowIndex] && data.verticalAlignments[rowIndex][colIndex];
+            const border = data.borders && data.borders[rowIndex] && data.borders[rowIndex][colIndex];
 
-                if (!isMergedCell(mergedCells, rowIndex + 1, colIndex + 1)) {
-                    const td = document.createElement("td");
-                    td.textContent = cell;
-                    applyStyles(td, {
-                        background: data.backgrounds[rowIndex][colIndex],
-                        fontColor: data.fontColors[rowIndex][colIndex],
-                        fontSize: data.fontSizes[rowIndex][colIndex],
-                        fontWeight: data.fontWeights[rowIndex][colIndex],
-                        hAlign: data.horizontalAlignments[rowIndex][colIndex],
-                        vAlign: data.verticalAlignments[rowIndex][colIndex],
-                        border: data.borders[rowIndex][colIndex],
-                    });
-                    tr.appendChild(td);
-                }
+            if (!isMergedCell(mergedCells, rowIndex + 1, colIndex + 1)) {
+                const td = document.createElement("td");
+                td.textContent = cell;
+                applyStyles(td, {
+                    background,
+                    fontColor,
+                    fontSize,
+                    fontWeight,
+                    hAlign,
+                    vAlign,
+                    border,
+                });
+                tr.appendChild(td);
             }
         });
         table.appendChild(tr);
@@ -49,13 +48,13 @@ function renderTable(data) {
 }
 
 function applyStyles(td, cellData) {
-    td.style.backgroundColor = cellData.background;
-    td.style.color = cellData.fontColor;
-    td.style.fontSize = `${cellData.fontSize}px`;
-    td.style.fontWeight = cellData.fontWeight;
-    td.style.textAlign = cellData.hAlign;
-    td.style.verticalAlign = cellData.vAlign;
-    td.style.border = cellData.border ? "1px solid black" : "none";
+    if (cellData.background) td.style.backgroundColor = cellData.background;
+    if (cellData.fontColor) td.style.color = cellData.fontColor;
+    if (cellData.fontSize) td.style.fontSize = `${cellData.fontSize}px`;
+    if (cellData.fontWeight) td.style.fontWeight = cellData.fontWeight;
+    if (cellData.hAlign) td.style.textAlign = cellData.hAlign;
+    if (cellData.vAlign) td.style.verticalAlign = cellData.vAlign;
+    if (cellData.border) td.style.border = "1px solid black";
 }
 
 function isMergedCell(mergedCells, row, col) {
