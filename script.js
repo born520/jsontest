@@ -13,6 +13,9 @@ async function fetchData() {
     const numRows = values.length;
     const numCols = values[0].length;
 
+    // Remove existing table rows if any
+    table.innerHTML = '';
+
     // Create table headers
     const headerRow = document.createElement('tr');
     for (let col = 0; col < numCols; col++) {
@@ -29,7 +32,6 @@ async function fetchData() {
       const cells = [];
       for (let col = 0; col < numCols; col++) {
         const td = document.createElement('td');
-        td.textContent = values[row][col] || '';
         cells.push(td);
         tr.appendChild(td);
       }
@@ -37,13 +39,19 @@ async function fetchData() {
       table.appendChild(tr);
     }
 
-    // Apply cell merges
+    // Apply cell values and styles
     mergeInfo.forEach(info => {
-      const { row, column, rowSpan, colSpan, text } = info;
+      const { row, column, rowSpan, colSpan, text, fontColor, backgroundColor, fontSize, fontWeight } = info;
       const cell = rows[row][column];
       cell.textContent = text;
       cell.rowSpan = rowSpan;
       cell.colSpan = colSpan;
+
+      // Apply text styles
+      if (fontColor) cell.style.color = fontColor;
+      if (backgroundColor) cell.style.backgroundColor = backgroundColor;
+      if (fontSize) cell.style.fontSize = fontSize;
+      if (fontWeight) cell.style.fontWeight = fontWeight;
 
       // Clear other cells in the span area
       for (let r = row; r < row + rowSpan; r++) {
