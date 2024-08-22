@@ -1,5 +1,5 @@
-// JSON 데이터를 기반으로 테이블을 생성하고 병합하는 함수
-function createTable(values, mergeInfo) {
+// JSON 데이터를 기반으로 테이블을 생성하고 병합 정보를 적용하는 함수
+function createTableWithMerge(values, mergeInfo) {
   // 테이블과 테이블 헤더 생성
   const table = document.createElement('table');
   table.style.borderCollapse = 'collapse';
@@ -11,6 +11,7 @@ function createTable(values, mergeInfo) {
   // 행과 셀을 생성
   const cells = Array.from({ length: numRows }, () => Array.from({ length: numCols }, () => null));
   
+  // 테이블 생성
   values.forEach((row, rowIndex) => {
     const tr = document.createElement('tr');
     row.forEach((cell, colIndex) => {
@@ -29,9 +30,11 @@ function createTable(values, mergeInfo) {
   // 병합 정보 적용
   mergeInfo.forEach(info => {
     const { row, column, rowSpan, colSpan, text } = info;
+
+    // 병합 시작 셀 선택
     const cell = cells[row][column];
 
-    // 셀의 텍스트와 병합 범위를 설정
+    // 병합된 셀의 텍스트와 속성 설정
     cell.textContent = text;
     cell.rowSpan = rowSpan;
     cell.colSpan = colSpan;
@@ -41,11 +44,12 @@ function createTable(values, mergeInfo) {
       for (let c = column; c < column + colSpan; c++) {
         if (r === row && c === column) continue; // 병합 시작 셀은 건드리지 않음
         if (r >= numRows || c >= numCols) continue; // 범위 초과 예외 처리
-        cells[r][c].textContent = '';
+        cells[r][c].textContent = ''; // 병합된 셀의 내용 비우기
       }
     }
   });
 
+  // 테이블을 문서에 추가
   document.body.appendChild(table);
 }
 
@@ -59,6 +63,6 @@ fetch('https://script.google.com/macros/s/AKfycbxeJFOU1P_Nf_oq8KZal818DXpuqET-Hl
     console.log('Values:', values);
     console.log('Merge Info:', mergeInfo);
     
-    createTable(values, mergeInfo);
+    createTableWithMerge(values, mergeInfo);
   })
   .catch(error => console.error('Error fetching data:', error));
