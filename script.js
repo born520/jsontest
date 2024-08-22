@@ -3,9 +3,7 @@ function createTable(values, mergeInfo) {
   const table = document.createElement('table');
   table.style.borderCollapse = 'collapse';
   table.style.width = '100%';
-  
-  const tbody = document.createElement('tbody');
-  
+
   // Create the table rows and cells
   values.forEach((row, rowIndex) => {
     const tr = document.createElement('tr');
@@ -16,11 +14,8 @@ function createTable(values, mergeInfo) {
       td.style.padding = '8px';
       tr.appendChild(td);
     });
-    tbody.appendChild(tr);
+    table.appendChild(tr);
   });
-  
-  table.appendChild(tbody);
-  document.body.appendChild(table);
 
   // Apply cell merges
   mergeInfo.forEach(info => {
@@ -51,6 +46,8 @@ function createTable(values, mergeInfo) {
       }
     }
   });
+
+  document.body.appendChild(table);
 }
 
 // JSON 데이터 요청 및 처리
