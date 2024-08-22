@@ -1,10 +1,16 @@
-// 테이블을 생성하고 병합 정보를 적용하는 함수
+// JSON 데이터를 기반으로 테이블을 생성하고 병합하는 함수
 function createTable(values, mergeInfo) {
+  // 테이블과 테이블 헤더 생성
   const table = document.createElement('table');
   table.style.borderCollapse = 'collapse';
   table.style.width = '100%';
 
-  // 테이블 행과 셀 생성
+  const numRows = values.length;
+  const numCols = values[0].length;
+
+  // 행과 셀을 생성
+  const cells = Array.from({ length: numRows }, () => Array.from({ length: numCols }, () => null));
+  
   values.forEach((row, rowIndex) => {
     const tr = document.createElement('tr');
     row.forEach((cell, colIndex) => {
@@ -15,6 +21,7 @@ function createTable(values, mergeInfo) {
       td.dataset.rowIndex = rowIndex;
       td.dataset.colIndex = colIndex;
       tr.appendChild(td);
+      cells[rowIndex][colIndex] = td;
     });
     table.appendChild(tr);
   });
@@ -22,29 +29,19 @@ function createTable(values, mergeInfo) {
   // 병합 정보 적용
   mergeInfo.forEach(info => {
     const { row, column, rowSpan, colSpan, text } = info;
-    const tableRows = table.getElementsByTagName('tr');
+    const cell = cells[row][column];
 
-    if (row >= tableRows.length) return; // 예외 처리
-
-    const rowElement = tableRows[row];
-    if (column >= rowElement.getElementsByTagName('td').length) return; // 예외 처리
-
-    const cell = rowElement.getElementsByTagName('td')[column];
+    // 셀의 텍스트와 병합 범위를 설정
     cell.textContent = text;
     cell.rowSpan = rowSpan;
     cell.colSpan = colSpan;
 
-    // 병합된 셀의 위치에 있는 다른 셀에서 텍스트를 지웁니다.
+    // 병합된 셀 외의 영역에 있는 셀을 비웁니다.
     for (let r = row; r < row + rowSpan; r++) {
-      if (r >= tableRows.length) continue; // 예외 처리
-
-      const rowElement = tableRows[r];
       for (let c = column; c < column + colSpan; c++) {
-        if (c >= rowElement.getElementsByTagName('td').length) continue; // 예외 처리
-
-        if (r === row && c === column) continue; // 현재 셀은 건드리지 않음
-        
-        rowElement.getElementsByTagName('td')[c].textContent = '';
+        if (r === row && c === column) continue; // 병합 시작 셀은 건드리지 않음
+        if (r >= numRows || c >= numCols) continue; // 범위 초과 예외 처리
+        cells[r][c].textContent = '';
       }
     }
   });
