@@ -27,7 +27,6 @@ function createTable(data) {
   // Create table header
   const thead = document.createElement('thead');
   const headerRow = document.createElement('tr');
-  // Adjust based on actual data or set your own headers
   const numCols = values[0].length; // Assuming the first row has the number of columns
   for (let i = 0; i < numCols; i++) {
     const th = document.createElement('th');
@@ -78,10 +77,5 @@ function createTable(data) {
     });
   } else {
     console.error('mergeInfo is not an array or has incorrect format');
-  }
-
-  // Hide the first row (header row)
-  if (thead && thead.rows.length > 0) {
-    thead.rows[0].style.display = 'none'; // Hides the first row
   }
 }
