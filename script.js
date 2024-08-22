@@ -8,12 +8,11 @@ async function fetchData() {
 
     if (!values.length) return; // No data
 
-    // Create table rows and cells
     const numRows = values.length;
     const numCols = values[0].length;
-    const cells = [];
 
     // Create table structure
+    const cells = [];
     for (let r = 0; r < numRows; r++) {
       const tr = document.createElement('tr');
       cells[r] = [];
@@ -40,15 +39,19 @@ async function fetchData() {
           if (r === row && c === column) {
             cell.textContent = text;
           } else {
-            cell.textContent = '';
+            cell.textContent = ''; // Ensure empty text in merged cells
           }
           cell.style.color = fontColor || '';
           cell.style.backgroundColor = backgroundColor || '';
           cell.style.fontSize = fontSize || '';
           cell.style.fontWeight = fontWeight || '';
-          cell.rowSpan = r === row ? rowSpan : 1;
-          cell.colSpan = c === column ? colSpan : 1;
-          cell.classList.add('merged'); // For proper alignment
+          if (r === row && c === column) {
+            cell.rowSpan = rowSpan;
+            cell.colSpan = colSpan;
+          } else {
+            cell.rowSpan = 1;
+            cell.colSpan = 1;
+          }
         }
       }
     });
