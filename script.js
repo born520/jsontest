@@ -16,15 +16,6 @@ async function fetchData() {
     // Remove existing table rows if any
     table.innerHTML = '';
 
-    // Create table headers (hidden)
-    const headerRow = document.createElement('tr');
-    for (let col = 0; col < numCols; col++) {
-      const th = document.createElement('th');
-      th.className = 'hidden';  // Hide the column headers
-      headerRow.appendChild(th);
-    }
-    table.appendChild(headerRow);
-
     // Create table rows
     const rows = [];
     for (let row = 0; row < numRows; row++) {
