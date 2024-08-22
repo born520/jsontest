@@ -1,42 +1,55 @@
-document.addEventListener('DOMContentLoaded', () => {
-    fetch('https://script.google.com/macros/s/AKfycbyf3xjZp5KL_j-aJIB1W-WfiWfakGnUUGj7ZaUrMazdBj1lfR4xVxLWZqSjZE3iso2FTA/exec')
-        .then(response => response.json())
-        .then(data => {
-            const table = document.getElementById('data-table');
-            const { headers, cellData, mergeInfo } = data;
+// script.js
+async function fetchData() {
+  try {
+    const response = await fetch('https://script.google.com/macros/s/AKfycbxeJFOU1P_Nf_oq8KZal818DXpuqET-HlONezi9KpYXHDaj0QhjsvPRK9TALujAMMQNtg/exec');
+    const data = await response.json();
+    
+    const table = document.getElementById('data-table');
+    const values = data.values;
+    const mergeInfo = data.mergeInfo;
 
-            // Create table header
-            const thead = document.createElement('thead');
-            const headerRow = document.createElement('tr');
-            headers.forEach(header => {
-                const th = document.createElement('th');
-                th.textContent = header;
-                headerRow.appendChild(th);
-            });
-            thead.appendChild(headerRow);
-            table.appendChild(thead);
+    if (values.length === 0) return;
 
-            // Create table body
-            const tbody = document.createElement('tbody');
-            cellData.forEach(rowData => {
-                const row = document.createElement('tr');
-                rowData.forEach(cellData => {
-                    const td = document.createElement('td');
-                    td.textContent = cellData || '';
-                    row.appendChild(td);
-                });
-                tbody.appendChild(row);
-            });
-            table.appendChild(tbody);
+    const numRows = values.length;
+    const numCols = values[0].length;
 
-            // Handle cell merges
-            mergeInfo.forEach(merge => {
-                const row = table.querySelector(`tbody tr:nth-child(${merge.row + 1})`);
-                const cell = row.querySelector(`td:nth-child(${merge.column + 1})`);
-                cell.rowSpan = merge.rowSpan;
-                cell.colSpan = merge.colSpan;
-                cell.textContent = merge.text || '';
-            });
-        })
-        .catch(error => console.error('Error fetching data:', error));
-});
+    // Create table headers
+    const headerRow = document.createElement('tr');
+    for (let col = 0; col < numCols; col++) {
+      const th = document.createElement('th');
+      th.textContent = `Column ${col + 1}`;
+      headerRow.appendChild(th);
+    }
+    table.appendChild(headerRow);
+
+    // Create table rows
+    for (let row = 0; row < numRows; row++) {
+      const tr = document.createElement('tr');
+      for (let col = 0; col < numCols; col++) {
+        const td = document.createElement('td');
+        td.textContent = values[row][col] || '';
+        tr.appendChild(td);
+      }
+      table.appendChild(tr);
+    }
+
+    // Apply cell merges
+    mergeInfo.forEach(info => {
+      const startRow = info.row;
+      const startCol = info.column;
+      const rowSpan = info.rowSpan;
+      const colSpan = info.colSpan;
+      const text = info.text;
+
+      const cell = table.rows[startRow + 1].cells[startCol];
+      cell.textContent = text;
+      cell.rowSpan = rowSpan;
+      cell.colSpan = colSpan;
+    });
+
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}
+
+fetchData();
