@@ -1,19 +1,19 @@
-/* styles.css */
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
 table {
   border-collapse: collapse;
   width: 100%;
-  table-layout: fixed;
 }
 
 td {
   border: 1px solid #ddd;
   padding: 8px;
-  text-align: center;
-  vertical-align: middle;
+  text-align: left;
 }
 
-td.merged {
-  text-align: center;
-  vertical-align: middle;
-  /* additional styling for merged cells */
+td.empty {
+  border: none;
 }
