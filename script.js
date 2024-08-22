@@ -13,19 +13,22 @@ function renderTable(data) {
     tableData.forEach((row, rowIndex) => {
         const tr = document.createElement("tr");
         row.forEach((cell, colIndex) => {
-            if (!isMergedCell(mergedCells, rowIndex + 1, colIndex + 1)) {
-                const td = document.createElement("td");
-                td.textContent = cell;
-                applyStyles(td, {
-                    background: data.backgrounds[rowIndex][colIndex],
-                    fontColor: data.fontColors[rowIndex][colIndex],
-                    fontSize: data.fontSizes[rowIndex][colIndex],
-                    fontWeight: data.fontWeights[rowIndex][colIndex],
-                    hAlign: data.horizontalAlignments[rowIndex][colIndex],
-                    vAlign: data.verticalAlignments[rowIndex][colIndex],
-                    border: data.borders[rowIndex][colIndex],
-                });
-                tr.appendChild(td);
+            // 배열에 인덱스가 존재하는지 확인
+            if (data.backgrounds[rowIndex] && data.backgrounds[rowIndex][colIndex] !== undefined) {
+                if (!isMergedCell(mergedCells, rowIndex + 1, colIndex + 1)) {
+                    const td = document.createElement("td");
+                    td.textContent = cell;
+                    applyStyles(td, {
+                        background: data.backgrounds[rowIndex][colIndex],
+                        fontColor: data.fontColors[rowIndex][colIndex],
+                        fontSize: data.fontSizes[rowIndex][colIndex],
+                        fontWeight: data.fontWeights[rowIndex][colIndex],
+                        hAlign: data.horizontalAlignments[rowIndex][colIndex],
+                        vAlign: data.verticalAlignments[rowIndex][colIndex],
+                        border: data.borders[rowIndex][colIndex],
+                    });
+                    tr.appendChild(td);
+                }
             }
         });
         table.appendChild(tr);
@@ -67,7 +70,7 @@ function mergeCells(table, row, col, numRows, numCols) {
     for (let i = row; i < row + numRows; i++) {
         for (let j = col; j < col + numCols; j++) {
             if (i === row && j === col) continue;
-            table.rows[i].deleteCell(j);
+            table.rows[i].deleteCell(j - col);
         }
     }
 }
