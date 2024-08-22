@@ -18,6 +18,7 @@ async function fetchData() {
       cells[r] = [];
       for (let c = 0; c < numCols; c++) {
         const td = document.createElement('td');
+        td.classList.add('empty'); // Initially mark as empty
         tr.appendChild(td);
         cells[r][c] = td;
       }
@@ -37,24 +38,17 @@ async function fetchData() {
           // Set cell text only in the first cell of the merge
           if (r === startRow && c === startCol) {
             cell.textContent = text;
-          } else {
-            cell.textContent = ''; // Empty text for merged cells
-          }
-
-          // Apply styles to all merged cells
-          cell.style.color = fontColor || '';
-          cell.style.backgroundColor = backgroundColor || '';
-          cell.style.fontSize = fontSize || '';
-          cell.style.fontWeight = fontWeight || '';
-
-          // Apply rowSpan and colSpan only to the first cell
-          if (r === startRow && c === startCol) {
+            cell.style.color = fontColor || '';
+            cell.style.backgroundColor = backgroundColor || '';
+            cell.style.fontSize = fontSize || '';
+            cell.style.fontWeight = fontWeight || '';
             cell.rowSpan = rowSpan;
             cell.colSpan = colSpan;
+            cell.classList.remove('empty');
           } else {
-            // Clear cell attributes for non-merge cells
-            cell.rowSpan = 1;
-            cell.colSpan = 1;
+            // Empty text for merged cells
+            cell.textContent = '';
+            cell.classList.add('empty');
           }
         }
       }
@@ -63,8 +57,9 @@ async function fetchData() {
     // Fill in any text values not covered by mergeInfo
     values.forEach((row, r) => {
       row.forEach((value, c) => {
-        if (!cells[r][c].textContent) {
+        if (cells[r][c].textContent === '') {
           cells[r][c].textContent = value;
+          cells[r][c].classList.remove('empty');
         }
       });
     });
