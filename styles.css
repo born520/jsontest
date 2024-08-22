@@ -1,4 +1,4 @@
-/* styles/style.css */
+/* style.css */
 table {
   border-collapse: collapse;
   width: 100%;
@@ -9,9 +9,11 @@ td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: center;
+  vertical-align: middle;
 }
 
 td.merged {
   text-align: center;
   vertical-align: middle;
+  /* additional styling for merged cells */
 }
