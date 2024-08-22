@@ -46,15 +46,17 @@ async function fetchData() {
 
       for (let r = row; r < row + rowSpan; r++) {
         for (let c = column; c < column + colSpan; c++) {
-          cellStyles[`${r}-${c}`] = {
-            text,
-            fontColor,
-            backgroundColor,
-            fontSize,
-            fontWeight,
-            rowSpan,
-            colSpan,
-          };
+          if (!cellStyles[`${r}-${c}`]) {
+            cellStyles[`${r}-${c}`] = {
+              text,
+              fontColor,
+              backgroundColor,
+              fontSize,
+              fontWeight,
+              rowSpan,
+              colSpan,
+            };
+          }
         }
       }
     });
@@ -83,6 +85,15 @@ async function fetchData() {
           } else {
             cell.textContent = ''; // Clear duplicate cells
           }
+        } else {
+          // Clear any cell that is not in the styles
+          cell.textContent = '';
+          cell.style.color = '';
+          cell.style.backgroundColor = '';
+          cell.style.fontSize = '';
+          cell.style.fontWeight = '';
+          cell.rowSpan = 1;
+          cell.colSpan = 1;
         }
       }
     }
