@@ -20,7 +20,7 @@ async function fetchData() {
     const headerRow = document.createElement('tr');
     for (let col = 0; col < numCols; col++) {
       const th = document.createElement('th');
-      th.textContent = `Column ${col + 1}`;
+      th.className = 'hidden';  // Hide the column headers
       headerRow.appendChild(th);
     }
     table.appendChild(headerRow);
