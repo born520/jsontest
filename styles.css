@@ -1,40 +1,28 @@
-/* 전체 페이지 스타일 */
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
-    padding: 0;
 }
 
-/* 테이블 스타일 */
 table {
-    border-collapse: collapse;
     width: 100%;
-    table-layout: fixed; /* 고정 폭으로 셀 내용 삐져나가는 문제 해결 */
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
 }
 
 th, td {
-    border: 1px solid #ddd;
     padding: 8px;
-    text-align: left;
+    text-align: center;
 }
 
 th {
-    background-color: #f4f4f4;
+    background-color: #f2f2f2;
     font-weight: bold;
 }
 
-td {
-    word-wrap: break-word; /* 긴 내용 줄 바꿈 처리 */
-}
-
-/* 테이블 헤더 스타일 */
-thead th {
-    background-color: #14766a;
-    color: #f2ebde;
-}
-
-/* 테이블 본문 스타일 */
-tbody td {
-    background-color: #ffffff;
-    color: #000000;
+tr:nth-child(even) {
+    background-color: #f9f9f9;
 }
