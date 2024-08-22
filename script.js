@@ -23,28 +23,36 @@ async function fetchData() {
     table.appendChild(headerRow);
 
     // Create table rows
+    const rows = [];
     for (let row = 0; row < numRows; row++) {
       const tr = document.createElement('tr');
+      const cells = [];
       for (let col = 0; col < numCols; col++) {
         const td = document.createElement('td');
         td.textContent = values[row][col] || '';
+        cells.push(td);
         tr.appendChild(td);
       }
+      rows.push(cells);
       table.appendChild(tr);
     }
 
     // Apply cell merges
     mergeInfo.forEach(info => {
-      const startRow = info.row;
-      const startCol = info.column;
-      const rowSpan = info.rowSpan;
-      const colSpan = info.colSpan;
-      const text = info.text;
-
-      const cell = table.rows[startRow + 1].cells[startCol];
+      const { row, column, rowSpan, colSpan, text } = info;
+      const cell = rows[row][column];
       cell.textContent = text;
       cell.rowSpan = rowSpan;
       cell.colSpan = colSpan;
+
+      // Clear other cells in the span area
+      for (let r = row; r < row + rowSpan; r++) {
+        for (let c = column; c < column + colSpan; c++) {
+          if (r !== row || c !== column) {
+            rows[r][c].style.display = 'none'; // Hide cells that are covered by the merged cell
+          }
+        }
+      }
     });
 
   } catch (error) {
