@@ -36,4 +36,35 @@ function applyStyles(td, data, rowIndex, colIndex) {
     const fontSize = data.fontSizes[rowIndex][colIndex];
     const fontWeight = data.fontWeights[rowIndex][colIndex];
     const hAlign = data.horizontalAlignments[rowIndex][colIndex];
-    const v
+    const vAlign = data.verticalAlignments[rowIndex][colIndex];
+    const border = data.borders[rowIndex][colIndex];
+
+    if (background) td.style.backgroundColor = background;
+    if (fontColor) td.style.color = fontColor;
+    if (fontSize) td.style.fontSize = `${fontSize}px`;
+    if (fontWeight) td.style.fontWeight = fontWeight;
+    if (hAlign) td.style.textAlign = hAlign;
+    if (vAlign) td.style.verticalAlign = vAlign;
+    if (border) td.style.border = "1px solid black";
+}
+
+function mergeCells(table, row, col, numRows, numCols) {
+    const cell = table.rows[row].cells[col];
+    if (!cell) {
+        console.error(`No cell found at row ${row}, column ${col} to merge.`);
+        return;
+    }
+    cell.rowSpan = numRows;
+    cell.colSpan = numCols;
+
+    for (let i = row; i < row + numRows; i++) {
+        for (let j = col; j < col + numCols; j++) {
+            if (i === row && j === col) continue;
+            if (table.rows[i] && table.rows[i].cells[j - col]) {
+                table.rows[i].deleteCell(j - col);
+            }
+        }
+    }
+}
+
+fetchData();
