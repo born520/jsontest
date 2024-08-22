@@ -18,14 +18,18 @@ function createTable(data) {
     const table = document.createElement('table');
     const tbody = document.createElement('tbody');
 
+    const numRows = data.values.length;
+    const numCols = data.values[0].length;
+
     // 기본 테이블 생성
-    data.values.forEach((row, rowIndex) => {
+    for (let rowIndex = 0; rowIndex < numRows; rowIndex++) {
         const tr = document.createElement('tr');
 
-        row.forEach((cell, cellIndex) => {
+        for (let cellIndex = 0; cellIndex < numCols; cellIndex++) {
+            const cellValue = data.values[rowIndex][cellIndex];
             const td = document.createElement(rowIndex === 0 ? 'th' : 'td');
-            td.textContent = cell;
-            
+            td.textContent = cellValue;
+
             // 스타일 적용
             if (data.backgrounds[rowIndex] && data.backgrounds[rowIndex][cellIndex]) {
                 td.style.backgroundColor = data.backgrounds[rowIndex][cellIndex];
@@ -47,10 +51,10 @@ function createTable(data) {
             }
 
             tr.appendChild(td);
-        });
+        }
 
         tbody.appendChild(tr);
-    });
+    }
 
     table.appendChild(tbody);
     container.appendChild(table);
