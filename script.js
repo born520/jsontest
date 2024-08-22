@@ -63,14 +63,25 @@ function createTable(data) {
   table.appendChild(tbody);
 
   // Apply mergeInfo for cell merging
-  mergeInfo.forEach(merge => {
-    const [startRow, startCol, numRows, numCols] = merge;
-    const startCellKey = `${startRow},${startCol}`;
-    const cellToMerge = cellDataMap.get(startCellKey);
+  if (Array.isArray(mergeInfo)) {
+    mergeInfo.forEach(merge => {
+      if (Array.isArray(merge) && merge.length === 4) {
+        const [startRow, startCol, numRows, numCols] = merge;
+        const startCellKey = `${startRow},${startCol}`;
+        const cellToMerge = cellDataMap.get(startCellKey);
 
-    if (cellToMerge) {
-      cellToMerge.setAttribute('rowspan', numRows);
-      cellToMerge.setAttribute('colspan', numCols);
-    }
-  });
+        if (cellToMerge) {
+          cellToMerge.setAttribute('rowspan', numRows);
+          cellToMerge.setAttribute('colspan', numCols);
+        }
+      }
+    });
+  } else {
+    console.error('mergeInfo is not an array or has incorrect format');
+  }
+
+  // Hide the first row (header row)
+  if (thead && thead.rows.length > 0) {
+    thead.rows[0].style.display = 'none'; // Hides the first row
+  }
 }
