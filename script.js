@@ -24,10 +24,11 @@ function createTable(data) {
     return;
   }
 
+  const numCols = values[0].length; // Assuming the first row has the number of columns
+
   // Create table header
   const thead = document.createElement('thead');
   const headerRow = document.createElement('tr');
-  const numCols = values[0].length; // Assuming the first row has the number of columns
   for (let i = 0; i < numCols; i++) {
     const th = document.createElement('th');
     th.textContent = `Column ${i + 1}`;
@@ -40,17 +41,18 @@ function createTable(data) {
   const tbody = document.createElement('tbody');
   const cellDataMap = new Map(); // To track cell merges
   const numRows = values.length;
-  const numCols = values[0].length;
 
   // Initialize table with empty cells
   for (let rowIndex = 0; rowIndex < numRows; rowIndex++) {
     const rowElement = document.createElement('tr');
+    const rowValues = values[rowIndex];
     for (let colIndex = 0; colIndex < numCols; colIndex++) {
       const cellElement = document.createElement('td');
       cellElement.dataset.row = rowIndex;
       cellElement.dataset.col = colIndex;
+      cellElement.textContent = rowValues[colIndex] || ''; // Set cell text
       rowElement.appendChild(cellElement);
-      cellDataMap.set(`${rowIndex},${colIndex}`, {element: cellElement, text: values[rowIndex][colIndex]});
+      cellDataMap.set(`${rowIndex},${colIndex}`, { element: cellElement, text: rowValues[colIndex] });
     }
     tbody.appendChild(rowElement);
   }
@@ -59,28 +61,16 @@ function createTable(data) {
   // Apply mergeInfo for cell merging
   mergeInfo.forEach(merge => {
     if (Array.isArray(merge) && merge.length === 5) {
-      const [startRow, startCol, numRows, numCols, text] = merge;
+      const [startRow, startCol, rowspan, colspan, text] = merge;
       const startCellKey = `${startRow},${startCol}`;
       const cellToMerge = cellDataMap.get(startCellKey);
 
       if (cellToMerge) {
         const cellElement = cellToMerge.element;
-        cellElement.setAttribute('rowspan', numRows);
-        cellElement.setAttribute('colspan', numCols);
+        cellElement.setAttribute('rowspan', rowspan);
+        cellElement.setAttribute('colspan', colspan);
         cellElement.textContent = text;
 
         // Clear text in other cells that are part of this merge
-        for (let rowOffset = 0; rowOffset < numRows; rowOffset++) {
-          for (let colOffset = 0; colOffset < numCols; colOffset++) {
-            if (rowOffset === 0 && colOffset === 0) continue;
-            const mergeCellKey = `${startRow + rowOffset},${startCol + colOffset}`;
-            const mergeCell = cellDataMap.get(mergeCellKey);
-            if (mergeCell) {
-              mergeCell.element.textContent = '';
-            }
-          }
-        }
-      }
-    }
-  });
-}
+        for (let rowOffset = 0; rowOffset < rowspan; rowOffset++) {
+          for
