@@ -78,7 +78,7 @@ function createTable(data) {
             const mergeCellKey = `${startRow + rowOffset},${startCol + colOffset}`;
             const mergeCell = cellDataMap.get(mergeCellKey);
             if (mergeCell) {
-              mergeCell.element.textContent = '';
+              mergeCell.element.textContent = ''; // Clear text in merged cells
             }
           }
         }
