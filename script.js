@@ -1,85 +1,62 @@
-document.addEventListener("DOMContentLoaded", function() {
-  fetch('https://script.google.com/macros/s/AKfycbxeJFOU1P_Nf_oq8KZal818DXpuqET-HlONezi9KpYXHDaj0QhjsvPRK9TALujAMMQNtg/exec')
-    .then(response => response.json())
-    .then(data => {
-      if (data && Array.isArray(data.values) && Array.isArray(data.mergeInfo)) {
-        createTable(data);
-      } else {
-        console.error('Invalid data format:', data);
-      }
-    })
-    .catch(error => console.error('Error fetching data:', error));
-});
-
-function createTable(data) {
-  const table = document.getElementById('data-table');
-  table.innerHTML = '';
-
-  const values = data.values;
-  const mergeInfo = data.mergeInfo;
-
-  if (!values || !mergeInfo) {
-    console.error('Missing values or mergeInfo in data');
-    return;
-  }
-
-  const numCols = values[0].length;
-  const numRows = values.length;
-
-  // Create table header (hidden)
-  const thead = document.createElement('thead');
-  const headerRow = document.createElement('tr');
-  for (let i = 0; i < numCols; i++) {
-    const th = document.createElement('th');
-    th.style.display = 'none'; // Hide column headers
-    headerRow.appendChild(th);
-  }
-  thead.appendChild(headerRow);
-  table.appendChild(thead);
-
-  // Create table body
+// JSON 데이터에서 테이블을 생성하고 병합된 셀을 처리하는 함수
+function createTable(values, mergeInfo) {
+  const table = document.createElement('table');
   const tbody = document.createElement('tbody');
-
-  // Initialize table with empty cells
-  const cellDataMap = new Map();
-  for (let rowIndex = 0; rowIndex < numRows; rowIndex++) {
-    const rowElement = document.createElement('tr');
-    for (let colIndex = 0; colIndex < numCols; colIndex++) {
-      const cellElement = document.createElement('td');
-      cellElement.dataset.row = rowIndex;
-      cellElement.dataset.col = colIndex;
-      cellElement.textContent = values[rowIndex][colIndex] || ''; // Set cell text from values
-      rowElement.appendChild(cellElement);
-      cellDataMap.set(`${rowIndex},${colIndex}`, { element: cellElement });
-    }
-    tbody.appendChild(rowElement);
-  }
+  
+  values.forEach((row, rowIndex) => {
+    const tr = document.createElement('tr');
+    row.forEach((cell, colIndex) => {
+      const td = document.createElement('td');
+      td.textContent = cell;
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  
   table.appendChild(tbody);
+  document.body.appendChild(table);
 
-  // Apply mergeInfo for cell merging
-  mergeInfo.forEach(merge => {
-    if (Array.isArray(merge) && merge.length === 5) {
-      const [startRow, startCol, rowspan, colspan, text] = merge;
+  // 병합된 셀 적용
+  mergeInfo.forEach(info => {
+    const { row, column, rowSpan, colSpan, text } = info;
+    const tableRows = table.getElementsByTagName('tr');
+    
+    if (row >= tableRows.length) return; // 예외 처리
 
-      // Update cellDataMap with merge information
-      for (let rowOffset = 0; rowOffset < rowspan; rowOffset++) {
-        for (let colOffset = 0; colOffset < colspan; colOffset++) {
-          const cellKey = `${startRow + rowOffset},${startCol + colOffset}`;
-          const cellData = cellDataMap.get(cellKey);
-          if (cellData) {
-            const cellElement = cellData.element;
-            if (rowOffset === 0 && colOffset === 0) {
-              // Set the text and attributes for the top-left cell of the merge
-              cellElement.setAttribute('rowspan', rowspan);
-              cellElement.setAttribute('colspan', colspan);
-              cellElement.textContent = text;
-            } else {
-              // Clear the text for other cells in the merge
-              cellElement.textContent = '';
-            }
-          }
-        }
+    const rowElement = tableRows[row];
+    if (column >= rowElement.getElementsByTagName('td').length) return; // 예외 처리
+
+    const cell = rowElement.getElementsByTagName('td')[column];
+    cell.textContent = text;
+    cell.rowSpan = rowSpan;
+    cell.colSpan = colSpan;
+
+    // 병합된 셀의 나머지 셀 비우기
+    for (let r = row; r < row + rowSpan; r++) {
+      if (r >= tableRows.length) continue; // 예외 처리
+
+      const rowElement = tableRows[r];
+      for (let c = column; c < column + colSpan; c++) {
+        if (c >= rowElement.getElementsByTagName('td').length) continue; // 예외 처리
+        
+        if (r === row && c === column) continue; // 현재 셀은 건드리지 않음
+        
+        rowElement.getElementsByTagName('td')[c].textContent = '';
       }
     }
   });
 }
+
+// JSON 데이터 요청 및 처리
+fetch('https://your-script-url')
+  .then(response => response.json())
+  .then(data => {
+    const { values, mergeInfo } = data;
+
+    // 콘솔에서 데이터를 확인합니다.
+    console.log('Values:', values);
+    console.log('Merge Info:', mergeInfo);
+    
+    createTable(values, mergeInfo);
+  })
+  .catch(error => console.error('Error fetching data:', error));
