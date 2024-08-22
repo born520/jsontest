@@ -73,4 +73,16 @@ function createTable(data) {
 
         // Clear text in other cells that are part of this merge
         for (let rowOffset = 0; rowOffset < rowspan; rowOffset++) {
-          for
+          for (let colOffset = 0; colOffset < colspan; colOffset++) {
+            if (rowOffset === 0 && colOffset === 0) continue;
+            const mergeCellKey = `${startRow + rowOffset},${startCol + colOffset}`;
+            const mergeCell = cellDataMap.get(mergeCellKey);
+            if (mergeCell) {
+              mergeCell.element.textContent = '';
+            }
+          }
+        }
+      }
+    }
+  });
+}
