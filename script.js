@@ -31,13 +31,21 @@ function renderTable(data) {
 }
 
 function applyStyles(td, data, rowIndex, colIndex) {
-    const background = data.backgrounds[rowIndex][colIndex];
-    const fontColor = data.fontColors[rowIndex][colIndex];
-    const fontSize = data.fontSizes[rowIndex][colIndex];
-    const fontWeight = data.fontWeights[rowIndex][colIndex];
-    const hAlign = data.horizontalAlignments[rowIndex][colIndex];
-    const vAlign = data.verticalAlignments[rowIndex][colIndex];
-    const border = data.borders[rowIndex][colIndex];
+    const backgrounds = data.backgrounds[rowIndex] || [];
+    const fontColors = data.fontColors[rowIndex] || [];
+    const fontSizes = data.fontSizes[rowIndex] || [];
+    const fontWeights = data.fontWeights[rowIndex] || [];
+    const horizontalAlignments = data.horizontalAlignments[rowIndex] || [];
+    const verticalAlignments = data.verticalAlignments[rowIndex] || [];
+    const borders = data.borders[rowIndex] || [];
+
+    const background = backgrounds[colIndex];
+    const fontColor = fontColors[colIndex];
+    const fontSize = fontSizes[colIndex];
+    const fontWeight = fontWeights[colIndex];
+    const hAlign = horizontalAlignments[colIndex];
+    const vAlign = verticalAlignments[colIndex];
+    const border = borders[colIndex];
 
     if (background) td.style.backgroundColor = background;
     if (fontColor) td.style.color = fontColor;
