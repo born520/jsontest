@@ -39,16 +39,16 @@ function createTable(data) {
 
   // Create table body
   const tbody = document.createElement('tbody');
-  const cellDataMap = new Map(); // To track cell merges
 
   // Initialize table with empty cells
+  const cellDataMap = new Map();
   for (let rowIndex = 0; rowIndex < numRows; rowIndex++) {
     const rowElement = document.createElement('tr');
     for (let colIndex = 0; colIndex < numCols; colIndex++) {
       const cellElement = document.createElement('td');
       cellElement.dataset.row = rowIndex;
       cellElement.dataset.col = colIndex;
-      cellElement.textContent = ''; // Set cell text initially empty
+      cellElement.textContent = values[rowIndex][colIndex] || ''; // Set cell text from values
       rowElement.appendChild(cellElement);
       cellDataMap.set(`${rowIndex},${colIndex}`, { element: cellElement });
     }
@@ -60,20 +60,21 @@ function createTable(data) {
   mergeInfo.forEach(merge => {
     if (Array.isArray(merge) && merge.length === 5) {
       const [startRow, startCol, rowspan, colspan, text] = merge;
+
+      // Update cellDataMap with merge information
       for (let rowOffset = 0; rowOffset < rowspan; rowOffset++) {
         for (let colOffset = 0; colOffset < colspan; colOffset++) {
           const cellKey = `${startRow + rowOffset},${startCol + colOffset}`;
           const cellData = cellDataMap.get(cellKey);
           if (cellData) {
+            const cellElement = cellData.element;
             if (rowOffset === 0 && colOffset === 0) {
               // Set the text and attributes for the top-left cell of the merge
-              const cellElement = cellData.element;
               cellElement.setAttribute('rowspan', rowspan);
               cellElement.setAttribute('colspan', colspan);
               cellElement.textContent = text;
             } else {
               // Clear the text for other cells in the merge
-              const cellElement = cellData.element;
               cellElement.textContent = '';
             }
           }
