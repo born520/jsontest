@@ -1,10 +1,10 @@
-// JSON 데이터에서 테이블을 생성하고 병합된 셀을 처리하는 함수
+// 테이블을 생성하고 병합 정보를 적용하는 함수
 function createTable(values, mergeInfo) {
   const table = document.createElement('table');
   table.style.borderCollapse = 'collapse';
   table.style.width = '100%';
 
-  // Create table rows
+  // 테이블 행과 셀 생성
   values.forEach((row, rowIndex) => {
     const tr = document.createElement('tr');
     row.forEach((cell, colIndex) => {
@@ -19,7 +19,7 @@ function createTable(values, mergeInfo) {
     table.appendChild(tr);
   });
 
-  // Apply cell merges
+  // 병합 정보 적용
   mergeInfo.forEach(info => {
     const { row, column, rowSpan, colSpan, text } = info;
     const tableRows = table.getElementsByTagName('tr');
@@ -34,14 +34,14 @@ function createTable(values, mergeInfo) {
     cell.rowSpan = rowSpan;
     cell.colSpan = colSpan;
 
-    // Clear text in merged cells
+    // 병합된 셀의 위치에 있는 다른 셀에서 텍스트를 지웁니다.
     for (let r = row; r < row + rowSpan; r++) {
       if (r >= tableRows.length) continue; // 예외 처리
 
       const rowElement = tableRows[r];
       for (let c = column; c < column + colSpan; c++) {
         if (c >= rowElement.getElementsByTagName('td').length) continue; // 예외 처리
-        
+
         if (r === row && c === column) continue; // 현재 셀은 건드리지 않음
         
         rowElement.getElementsByTagName('td')[c].textContent = '';
