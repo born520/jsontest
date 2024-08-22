@@ -49,7 +49,11 @@ function createTableWithMerge(values, mergeInfo) {
     }
   });
 
-  // 테이블을 문서에 추가
+  // 기존 테이블을 지우고 새로운 테이블을 추가합니다.
+  const existingTable = document.querySelector('table');
+  if (existingTable) {
+    existingTable.remove();
+  }
   document.body.appendChild(table);
 }
 
