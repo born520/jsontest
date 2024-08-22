@@ -25,13 +25,14 @@ function createTable(data) {
   }
 
   const numCols = values[0].length; // Assuming the first row has the number of columns
+  const numRows = values.length;
 
   // Create table header
   const thead = document.createElement('thead');
   const headerRow = document.createElement('tr');
   for (let i = 0; i < numCols; i++) {
     const th = document.createElement('th');
-    th.textContent = `Column ${i + 1}`;
+    th.style.display = 'none'; // Hide column headers
     headerRow.appendChild(th);
   }
   thead.appendChild(headerRow);
@@ -40,7 +41,6 @@ function createTable(data) {
   // Create table body
   const tbody = document.createElement('tbody');
   const cellDataMap = new Map(); // To track cell merges
-  const numRows = values.length;
 
   // Initialize table with empty cells
   for (let rowIndex = 0; rowIndex < numRows; rowIndex++) {
