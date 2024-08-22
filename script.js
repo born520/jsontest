@@ -39,13 +39,13 @@ function applyStyles(td, data, rowIndex, colIndex) {
     const verticalAlignments = data.verticalAlignments[rowIndex] || [];
     const borders = data.borders[rowIndex] || [];
 
-    const background = backgrounds[colIndex];
-    const fontColor = fontColors[colIndex];
-    const fontSize = fontSizes[colIndex];
-    const fontWeight = fontWeights[colIndex];
-    const hAlign = horizontalAlignments[colIndex];
-    const vAlign = verticalAlignments[colIndex];
-    const border = borders[colIndex];
+    const background = backgrounds[colIndex] || null;
+    const fontColor = fontColors[colIndex] || null;
+    const fontSize = fontSizes[colIndex] || null;
+    const fontWeight = fontWeights[colIndex] || null;
+    const hAlign = horizontalAlignments[colIndex] || null;
+    const vAlign = verticalAlignments[colIndex] || null;
+    const border = borders[colIndex] || null;
 
     if (background) td.style.backgroundColor = background;
     if (fontColor) td.style.color = fontColor;
