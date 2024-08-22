@@ -13,8 +13,15 @@ function renderTable(data) {
     tableData.forEach((row, rowIndex) => {
         const tr = document.createElement("tr");
         row.forEach((cell, colIndex) => {
-            // 배열에 인덱스가 존재하는지 확인
-            if (data.backgrounds[rowIndex] && data.backgrounds[rowIndex][colIndex] !== undefined) {
+            // 각 배열에 인덱스가 존재하는지 확인
+            if (data.backgrounds[rowIndex] && data.backgrounds[rowIndex][colIndex] !== undefined &&
+                data.fontColors[rowIndex] && data.fontColors[rowIndex][colIndex] !== undefined &&
+                data.fontSizes[rowIndex] && data.fontSizes[rowIndex][colIndex] !== undefined &&
+                data.fontWeights[rowIndex] && data.fontWeights[rowIndex][colIndex] !== undefined &&
+                data.horizontalAlignments[rowIndex] && data.horizontalAlignments[rowIndex][colIndex] !== undefined &&
+                data.verticalAlignments[rowIndex] && data.verticalAlignments[rowIndex][colIndex] !== undefined &&
+                data.borders[rowIndex] && data.borders[rowIndex][colIndex] !== undefined) {
+
                 if (!isMergedCell(mergedCells, rowIndex + 1, colIndex + 1)) {
                     const td = document.createElement("td");
                     td.textContent = cell;
@@ -70,7 +77,9 @@ function mergeCells(table, row, col, numRows, numCols) {
     for (let i = row; i < row + numRows; i++) {
         for (let j = col; j < col + numCols; j++) {
             if (i === row && j === col) continue;
-            table.rows[i].deleteCell(j - col);
+            if (table.rows[i] && table.rows[i].cells[j - col]) {
+                table.rows[i].deleteCell(j - col);
+            }
         }
     }
 }
