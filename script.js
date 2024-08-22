@@ -16,18 +16,45 @@ async function fetchTableData() {
 function createTable(data) {
     const container = document.getElementById('table-container');
     const table = document.createElement('table');
+    const thead = document.createElement('thead');
     const tbody = document.createElement('tbody');
 
     const numRows = data.values.length;
     const numCols = data.values[0].length;
 
-    // 기본 테이블 생성
-    for (let rowIndex = 0; rowIndex < numRows; rowIndex++) {
-        const tr = document.createElement('tr');
+    // 테이블 헤더 생성
+    const theadTr = document.createElement('tr');
+    for (let cellIndex = 0; cellIndex < numCols; cellIndex++) {
+        const th = document.createElement('th');
+        th.textContent = data.values[0][cellIndex] || ''; // 첫 번째 행은 헤더로 간주
+        if (data.backgrounds[0][cellIndex]) {
+            th.style.backgroundColor = data.backgrounds[0][cellIndex];
+        }
+        if (data.fontColors[0][cellIndex]) {
+            th.style.color = data.fontColors[0][cellIndex];
+        }
+        if (data.fontSizes[0][cellIndex]) {
+            th.style.fontSize = `${data.fontSizes[0][cellIndex]}px`;
+        }
+        if (data.fontWeights[0][cellIndex]) {
+            th.style.fontWeight = data.fontWeights[0][cellIndex];
+        }
+        if (data.horizontalAlignments[0][cellIndex]) {
+            th.style.textAlign = data.horizontalAlignments[0][cellIndex];
+        }
+        if (data.verticalAlignments[0][cellIndex]) {
+            th.style.verticalAlign = data.verticalAlignments[0][cellIndex];
+        }
+        theadTr.appendChild(th);
+    }
+    thead.appendChild(theadTr);
 
+    // 테이블 본문 생성
+    for (let rowIndex = 1; rowIndex < numRows; rowIndex++) {
+        const tr = document.createElement('tr');
         for (let cellIndex = 0; cellIndex < numCols; cellIndex++) {
             const cellValue = data.values[rowIndex][cellIndex];
-            const td = document.createElement(rowIndex === 0 ? 'th' : 'td');
+            const td = document.createElement('td');
             td.textContent = cellValue;
 
             // 스타일 적용
@@ -52,10 +79,10 @@ function createTable(data) {
 
             tr.appendChild(td);
         }
-
         tbody.appendChild(tr);
     }
 
+    table.appendChild(thead);
     table.appendChild(tbody);
     container.appendChild(table);
 
