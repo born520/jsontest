@@ -31,7 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Handle cell merges
             mergeInfo.forEach(merge => {
-                const cell = table.querySelector(`tbody tr:nth-child(${merge.row + 1}) td:nth-child(${merge.column + 1})`);
+                const row = table.querySelector(`tbody tr:nth-child(${merge.row + 1})`);
+                const cell = row.querySelector(`td:nth-child(${merge.column + 1})`);
                 cell.rowSpan = merge.rowSpan;
                 cell.colSpan = merge.colSpan;
                 cell.textContent = merge.text || '';
