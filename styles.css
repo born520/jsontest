@@ -1,29 +1,17 @@
-/* styles.css */
-body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-}
-
-h1 {
-  text-align: center;
-}
-
+/* style.css */
 table {
   border-collapse: collapse;
   width: 100%;
-  margin: 0 auto;
+  table-layout: fixed;
 }
 
-th, td {
-  border: 1px solid black;
+td {
+  border: 1px solid #ddd;
   padding: 8px;
   text-align: center;
 }
 
-th {
-  background-color: #f2f2f2;
-}
-
-.hidden {
-  display: none;
+td.merged {
+  text-align: center;
+  vertical-align: middle;
 }
