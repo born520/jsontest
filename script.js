@@ -39,43 +39,48 @@ function createTable(data) {
   // Create table body
   const tbody = document.createElement('tbody');
   const cellDataMap = new Map(); // To track cell merges
+  const numRows = values.length;
+  const numCols = values[0].length;
 
-  values.forEach((row, rowIndex) => {
+  // Initialize table with empty cells
+  for (let rowIndex = 0; rowIndex < numRows; rowIndex++) {
     const rowElement = document.createElement('tr');
-    row.forEach((cell, colIndex) => {
-      const cellKey = `${rowIndex},${colIndex}`;
-      let cellElement;
-
-      if (cellDataMap.has(cellKey)) {
-        cellElement = cellDataMap.get(cellKey);
-      } else {
-        cellElement = document.createElement('td');
-        cellElement.textContent = cell;
-        cellDataMap.set(cellKey, cellElement);
-      }
-
+    for (let colIndex = 0; colIndex < numCols; colIndex++) {
+      const cellElement = document.createElement('td');
+      cellElement.dataset.row = rowIndex;
+      cellElement.dataset.col = colIndex;
       rowElement.appendChild(cellElement);
-    });
+      cellDataMap.set(`${rowIndex},${colIndex}`, {element: cellElement, text: values[rowIndex][colIndex]});
+    }
     tbody.appendChild(rowElement);
-  });
-
+  }
   table.appendChild(tbody);
 
   // Apply mergeInfo for cell merging
-  if (Array.isArray(mergeInfo)) {
-    mergeInfo.forEach(merge => {
-      if (Array.isArray(merge) && merge.length === 4) {
-        const [startRow, startCol, numRows, numCols] = merge;
-        const startCellKey = `${startRow},${startCol}`;
-        const cellToMerge = cellDataMap.get(startCellKey);
+  mergeInfo.forEach(merge => {
+    if (Array.isArray(merge) && merge.length === 5) {
+      const [startRow, startCol, numRows, numCols, text] = merge;
+      const startCellKey = `${startRow},${startCol}`;
+      const cellToMerge = cellDataMap.get(startCellKey);
 
-        if (cellToMerge) {
-          cellToMerge.setAttribute('rowspan', numRows);
-          cellToMerge.setAttribute('colspan', numCols);
+      if (cellToMerge) {
+        const cellElement = cellToMerge.element;
+        cellElement.setAttribute('rowspan', numRows);
+        cellElement.setAttribute('colspan', numCols);
+        cellElement.textContent = text;
+
+        // Clear text in other cells that are part of this merge
+        for (let rowOffset = 0; rowOffset < numRows; rowOffset++) {
+          for (let colOffset = 0; colOffset < numCols; colOffset++) {
+            if (rowOffset === 0 && colOffset === 0) continue;
+            const mergeCellKey = `${startRow + rowOffset},${startCol + colOffset}`;
+            const mergeCell = cellDataMap.get(mergeCellKey);
+            if (mergeCell) {
+              mergeCell.element.textContent = '';
+            }
+          }
         }
       }
-    });
-  } else {
-    console.error('mergeInfo is not an array or has incorrect format');
-  }
+    }
+  });
 }
