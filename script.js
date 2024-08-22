@@ -40,8 +40,13 @@ function renderTable(data) {
         table.appendChild(tr);
     });
 
+    // 병합된 셀을 설정하기 전에 셀이 존재하는지 확인
     mergedCells.forEach(merge => {
-        mergeCells(table, merge.row - 1, merge.column - 1, merge.numRows, merge.numColumns);
+        if (table.rows[merge.row - 1] && table.rows[merge.row - 1].cells[merge.column - 1]) {
+            mergeCells(table, merge.row - 1, merge.column - 1, merge.numRows, merge.numColumns);
+        } else {
+            console.error(`Cannot merge cells at row ${merge.row - 1}, column ${merge.column - 1}.`);
+        }
     });
 
     tableContainer.appendChild(table);
@@ -70,6 +75,10 @@ function isMergedCell(mergedCells, row, col) {
 
 function mergeCells(table, row, col, numRows, numCols) {
     const cell = table.rows[row].cells[col];
+    if (!cell) {
+        console.error(`No cell found at row ${row}, column ${col} to merge.`);
+        return;
+    }
     cell.rowSpan = numRows;
     cell.colSpan = numCols;
 
