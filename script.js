@@ -60,20 +60,29 @@ async function fetchData() {
     });
 
     // Apply styles and values
+    const appliedCells = new Set(); // Track cells where content has been applied
     for (let r = 0; r < numRows; r++) {
       for (let c = 0; c < numCols; c++) {
         const cell = rows[r][c];
-        const style = cellStyles[`${r}-${c}`];
+        const key = `${r}-${c}`;
+        const style = cellStyles[key];
 
         if (style) {
-          cell.textContent = style.text;
-          cell.style.color = style.fontColor || '';
-          cell.style.backgroundColor = style.backgroundColor || '';
-          cell.style.fontSize = style.fontSize || '';
-          cell.style.fontWeight = style.fontWeight || '';
+          // Only apply content and styles if not already applied
+          if (!appliedCells.has(key)) {
+            cell.textContent = style.text;
+            cell.style.color = style.fontColor || '';
+            cell.style.backgroundColor = style.backgroundColor || '';
+            cell.style.fontSize = style.fontSize || '';
+            cell.style.fontWeight = style.fontWeight || '';
 
-          cell.rowSpan = style.rowSpan || 1;
-          cell.colSpan = style.colSpan || 1;
+            cell.rowSpan = style.rowSpan || 1;
+            cell.colSpan = style.colSpan || 1;
+
+            appliedCells.add(key); // Mark cell as processed
+          } else {
+            cell.textContent = ''; // Clear duplicate cells
+          }
         }
       }
     }
