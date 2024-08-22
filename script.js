@@ -18,7 +18,7 @@ function createTable(data) {
     const table = document.createElement('table');
     const tbody = document.createElement('tbody');
 
-    // 테이블 헤더와 데이터 행 생성
+    // 기본 테이블 생성
     data.values.forEach((row, rowIndex) => {
         const tr = document.createElement('tr');
 
@@ -54,6 +54,20 @@ function createTable(data) {
 
     table.appendChild(tbody);
     container.appendChild(table);
+
+    // 셀 병합 적용
+    applyCellMerge(data.mergeInfo, table);
+}
+
+// 셀 병합을 적용하는 함수
+function applyCellMerge(mergeInfo, table) {
+    mergeInfo.forEach(({ row, column, rowSpan, colSpan }) => {
+        const cell = table.querySelector(`tbody tr:nth-child(${row + 1}) td:nth-child(${column + 1})`);
+        if (cell) {
+            cell.rowSpan = rowSpan;
+            cell.colSpan = colSpan;
+        }
+    });
 }
 
 // 페이지 로드 후 데이터 가져오기
