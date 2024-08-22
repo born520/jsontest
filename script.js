@@ -16,7 +16,7 @@ async function fetchData() {
     // Remove existing table rows if any
     table.innerHTML = '';
 
-    // Create table headers
+    // Create table headers (hidden)
     const headerRow = document.createElement('tr');
     for (let col = 0; col < numCols; col++) {
       const th = document.createElement('th');
@@ -40,28 +40,43 @@ async function fetchData() {
     }
 
     // Apply cell values and styles
+    const cellStyles = {};
     mergeInfo.forEach(info => {
       const { row, column, rowSpan, colSpan, text, fontColor, backgroundColor, fontSize, fontWeight } = info;
-      const cell = rows[row][column];
-      cell.textContent = text;
-      cell.rowSpan = rowSpan;
-      cell.colSpan = colSpan;
 
-      // Apply text styles
-      if (fontColor) cell.style.color = fontColor;
-      if (backgroundColor) cell.style.backgroundColor = backgroundColor;
-      if (fontSize) cell.style.fontSize = fontSize;
-      if (fontWeight) cell.style.fontWeight = fontWeight;
-
-      // Clear other cells in the span area
       for (let r = row; r < row + rowSpan; r++) {
         for (let c = column; c < column + colSpan; c++) {
-          if (r !== row || c !== column) {
-            rows[r][c].style.display = 'none'; // Hide cells that are covered by the merged cell
-          }
+          cellStyles[`${r}-${c}`] = {
+            text,
+            fontColor,
+            backgroundColor,
+            fontSize,
+            fontWeight,
+            rowSpan,
+            colSpan,
+          };
         }
       }
     });
+
+    // Apply styles and values
+    for (let r = 0; r < numRows; r++) {
+      for (let c = 0; c < numCols; c++) {
+        const cell = rows[r][c];
+        const style = cellStyles[`${r}-${c}`];
+
+        if (style) {
+          cell.textContent = style.text;
+          cell.style.color = style.fontColor || '';
+          cell.style.backgroundColor = style.backgroundColor || '';
+          cell.style.fontSize = style.fontSize || '';
+          cell.style.fontWeight = style.fontWeight || '';
+
+          cell.rowSpan = style.rowSpan || 1;
+          cell.colSpan = style.colSpan || 1;
+        }
+      }
+    }
 
   } catch (error) {
     console.error('Error fetching data:', error);
