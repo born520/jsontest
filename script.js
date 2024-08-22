@@ -42,7 +42,15 @@ function renderTable(data) {
 
     // 병합된 셀을 설정하기 전에 셀이 존재하는지 확인
     mergedCells.forEach(merge => {
-        if (table.rows[merge.row - 1] && table.rows[merge.row - 1].cells[merge.column - 1]) {
+        // 셀이 유효한지 확인
+        if (
+            merge.row > 0 &&
+            merge.column > 0 &&
+            table.rows[merge.row - 1] &&
+            table.rows[merge.row - 1].cells[merge.column - 1] &&
+            merge.row + merge.numRows - 1 <= table.rows.length &&
+            merge.column + merge.numColumns - 1 <= table.rows[merge.row - 1].cells.length
+        ) {
             mergeCells(table, merge.row - 1, merge.column - 1, merge.numRows, merge.numColumns);
         } else {
             console.error(`Cannot merge cells at row ${merge.row - 1}, column ${merge.column - 1}.`);
