@@ -4,7 +4,7 @@ function createTable(values, mergeInfo) {
   table.style.borderCollapse = 'collapse';
   table.style.width = '100%';
 
-  // Create the table rows and cells
+  // Create table rows
   values.forEach((row, rowIndex) => {
     const tr = document.createElement('tr');
     row.forEach((cell, colIndex) => {
@@ -12,6 +12,8 @@ function createTable(values, mergeInfo) {
       td.textContent = cell;
       td.style.border = '1px solid black';
       td.style.padding = '8px';
+      td.dataset.rowIndex = rowIndex;
+      td.dataset.colIndex = colIndex;
       tr.appendChild(td);
     });
     table.appendChild(tr);
@@ -21,7 +23,7 @@ function createTable(values, mergeInfo) {
   mergeInfo.forEach(info => {
     const { row, column, rowSpan, colSpan, text } = info;
     const tableRows = table.getElementsByTagName('tr');
-    
+
     if (row >= tableRows.length) return; // 예외 처리
 
     const rowElement = tableRows[row];
