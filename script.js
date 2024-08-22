@@ -24,13 +24,6 @@ async function fetchData() {
       table.appendChild(tr);
     }
 
-    // Populate cell values
-    values.forEach((row, r) => {
-      row.forEach((value, c) => {
-        cells[r][c].textContent = value;
-      });
-    });
-
     // Apply merge and styling information
     mergeInfo.forEach(({ row, column, rowSpan, colSpan, text, fontColor, backgroundColor, fontSize, fontWeight }) => {
       // Adjust to zero-based index
@@ -59,11 +52,21 @@ async function fetchData() {
             cell.rowSpan = rowSpan;
             cell.colSpan = colSpan;
           } else {
+            // Clear cell attributes for non-merge cells
             cell.rowSpan = 1;
             cell.colSpan = 1;
           }
         }
       }
+    });
+
+    // Fill in any text values not covered by mergeInfo
+    values.forEach((row, r) => {
+      row.forEach((value, c) => {
+        if (!cells[r][c].textContent) {
+          cells[r][c].textContent = value;
+        }
+      });
     });
 
   } catch (error) {
