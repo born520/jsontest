@@ -33,19 +33,29 @@ async function fetchData() {
 
     // Apply merge and styling information
     mergeInfo.forEach(({ row, column, rowSpan, colSpan, text, fontColor, backgroundColor, fontSize, fontWeight }) => {
-      for (let r = row; r < row + rowSpan; r++) {
-        for (let c = column; c < column + colSpan; c++) {
+      // Adjust to zero-based index
+      const startRow = row;
+      const startCol = column;
+
+      for (let r = startRow; r < startRow + rowSpan; r++) {
+        for (let c = startCol; c < startCol + colSpan; c++) {
           const cell = cells[r][c];
-          if (r === row && c === column) {
+
+          // Set cell text only in the first cell of the merge
+          if (r === startRow && c === startCol) {
             cell.textContent = text;
           } else {
-            cell.textContent = ''; // Ensure empty text in merged cells
+            cell.textContent = ''; // Empty text for merged cells
           }
+
+          // Apply styles to all merged cells
           cell.style.color = fontColor || '';
           cell.style.backgroundColor = backgroundColor || '';
           cell.style.fontSize = fontSize || '';
           cell.style.fontWeight = fontWeight || '';
-          if (r === row && c === column) {
+
+          // Apply rowSpan and colSpan only to the first cell
+          if (r === startRow && c === startCol) {
             cell.rowSpan = rowSpan;
             cell.colSpan = colSpan;
           } else {
